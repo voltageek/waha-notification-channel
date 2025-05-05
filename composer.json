@@ -60,7 +60,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Cactus\\Notifications\\Channels\\WAHA\\WahaServiceProvider"
+                "Cactus\\Notifications\\Channels\\WAHA\\WhatsappServiceProvider"
             ]
         }
     },

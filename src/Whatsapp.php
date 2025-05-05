@@ -4,6 +4,7 @@ namespace Cactus\Notifications\Channels\WAHA;
 
 use Exception;
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Str;
 use Cactus\Notifications\Channels\WAHA\Exceptions\CouldNotSendNotification;
@@ -100,7 +101,8 @@ class Whatsapp
     public function sendFile(array $params, string $type): ?ResponseInterface
     {
         $endpoint = match($type){
-            'photo' => 'sendImage'
+            'photo' => 'sendImage',
+            'document' => 'sendFile'
         };
 
         return $this->sendRequest($endpoint, $params);
@@ -127,11 +129,14 @@ class Whatsapp
         if(!\Arr::has($params, 'session')) {
             \Arr::set($params, 'session', $this->getSession());
         }
-        dump($params);
 
         try {
             return $this->httpClient()->post($apiUri, [
-                'form_params' => $params,
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'X-Api-Key' => 'D27B1D94745D53E417B2FD9C1F522'
+                ],
+                RequestOptions::JSON => $params,
             ]);
         } catch (ClientException $exception) {
             throw CouldNotSendNotification::wahaRespondedWithAnError($exception);
