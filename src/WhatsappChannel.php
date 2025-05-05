@@ -42,7 +42,7 @@ class WhatsappChannel
             return null;
         }
 
-        $message->to($to);
+        $message->to(self::formatPhoneNumber($to));
 
         try {
             $response = $message->send();
@@ -65,5 +65,50 @@ class WhatsappChannel
         return $response instanceof Response
                 ? json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR)
                 : $response;
+    }
+
+    public static function formatPhoneNumber($phoneNumber )
+    {
+        // Check if number already starts with a plus sign (already E.164 format)
+        $hasPlus = (strpos($phoneNumber, '+') === 0);
+        if ($hasPlus) {
+            // Remove the plus sign temporarily
+            $phoneNumber = substr($phoneNumber, 1);
+        }
+    
+        // Remove any non-digit characters
+        $phoneNumber = preg_replace('/[^0-9]/', '', $phoneNumber);
+    
+        // Ghanaian country code
+        $countryCode = '233';
+    
+        // Check if the number already includes the country code
+        if (strpos($phoneNumber, $countryCode) === 0) {
+            // Number already has country code
+            $formattedNumber = $phoneNumber;
+    
+            // Validate the length of the number with country code
+            // Country code (3) + 9 digits = 12 digits total
+            $localPart = substr($phoneNumber, strlen($countryCode));
+            if (strlen($localPart) != 9) {
+                return false; // Invalid phone number length
+            }
+        } else {
+            // Handle numbers starting with 0
+            if (strlen($phoneNumber) > 0 && $phoneNumber[0] === '0') {
+                $phoneNumber = substr($phoneNumber, 1);
+            }
+    
+            // Validate length after potentially removing leading zero
+            // Ghanaian mobile numbers are typically 9 digits after removing the leading zero
+            if (strlen($phoneNumber) != 9) {
+                return false; // Invalid phone number length
+            }
+    
+            // Add country code
+            $formattedNumber = $countryCode . $phoneNumber;
+        }
+    
+        return "{$formattedNumber}@c.us";
     }
 }
