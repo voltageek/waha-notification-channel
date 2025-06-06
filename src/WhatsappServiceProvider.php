@@ -16,7 +16,7 @@ class WhatsappServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('waha-notification-channel')
-            ->hasConfigFile('waha')
+            ->hasConfigFile('whatsapp')
             ->discoversMigrations()
             ->runsMigrations();
     }
@@ -24,9 +24,9 @@ class WhatsappServiceProvider extends PackageServiceProvider
     public function packageRegistered()
     {
         $this->app->bind(Whatsapp::class, static fn () => new Whatsapp(
-            config('waha.api_key'),
-            config('waha.url'),
-            config('waha.session'),
+            config('whatsapp.api_key'),
+            config('whatsapp.url'),
+            config('whatsapp.session'),
             app(HttpClient::class),
         ));
 

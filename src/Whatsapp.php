@@ -18,7 +18,7 @@ class Whatsapp
         protected ?string $session = 'default',
         protected HttpClient $http = new HttpClient,
     ) {
-        $this->setApiBaseUri($apiBaseUri);
+        $this->setApiBaseUri("{$apiBaseUri}/api");
         $this->setSession($session);
     }
 

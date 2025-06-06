@@ -26,7 +26,6 @@ final class CouldNotSendNotification extends Exception
         $statusCode = $exception->getResponse()->getStatusCode();
 
         $result = json_decode($exception->getResponse()->getBody()->getContents());
-        dump($result);
         $description = $result->description ?? 'no description given';
 
         return new self("WAHA Server responded with an error `{$statusCode} - {$description}`", 0, $exception);
